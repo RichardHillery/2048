@@ -432,97 +432,107 @@ namespace _2048_WinForms
             if (MoveMode == MoveModes.TwoPersonWaitingForMouse && PendingKeyDowns.Count > 0)
                 PendingKeyDowns.Clear();
 
-            switch (step)
-            {
-                case 0:
-                    // Get a key input, and then start moving accordingly.
-                    if (PendingKeyDowns.Count == 0) return;
-                    KeyInProgress = PendingKeyDowns[0];
-                    PendingKeyDowns.RemoveAt(0);
-                    labelStatus.Text = "";
-                    didIMakeAMoveThisKeysroke = false;
-                    if (MoveMode == MoveModes.TwoPersonWaitingForArrow)
-                        MoveMode = MoveModes.TwoPersonWaitingForMouse;
-                    if (MoveMode == MoveModes.None)
-                    {
-                        switch (KeyInProgress)
-                        {
-                            case Keys.D1:
-                                MoveMode = MoveModes.Normal;
-                                break;
-                            case Keys.D2:
-                                MoveMode = MoveModes.TwoPersonWaitingForMouse;
-                                break;
-                            case Keys.D3:
-                                MoveMode = MoveModes.Hard;
-                                break;
-                        }
-                    }
-                    else
-                        step = 1;
-                    break;
-                case 1:
-                    // Move in the desired direction.
-                    if (!MoveDirection(KeyInProgress))
-                        step = 2;
-                    else
-                        didIMakeAMoveThisKeysroke = true;
-                    //  If nothing moves, go to case 2:
-                    break;
-                case 2:
-                    // Merge
-                    if (MergeDirection(KeyInProgress))
-                        didIMakeAMoveThisKeysroke = true;
-                    step = 3;
-                    break;
-                case 3:
-                    // Move in the desired direction.
-                    if (!MoveDirection(KeyInProgress))
-                        if (didIMakeAMoveThisKeysroke)
-                            step = 4;
-                        else
-                        {
-                            // Does not count as a move
-                            if (MoveMode == MoveModes.TwoPersonWaitingForMouse)
-                                MoveMode = MoveModes.TwoPersonWaitingForArrow;
 
-                            step = 0;
-                            if (KeyInProgress == Keys.Up) NotUp = true;
-                            if (KeyInProgress == Keys.Down) NotDown = true;
-                            if (KeyInProgress == Keys.Left) NotLeft = true;
-                            if (KeyInProgress == Keys.Right) NotRight = true;
-                            labelStatus.Text = "Nope!  "
-                                + (NotUp ? "Not Up " : "")
-                                + (NotDown ? "Not Down " : "")
-                                + (NotLeft ? "Not Left " : "")
-                                + (NotRight ? "Not Right " : "")
-                                 ;
-                            if (NotUp && NotDown && NotLeft && NotRight)
-                            {
-                                // Start over
-                                step = 5;
-                            }
-                        }
-                    else
-                        didIMakeAMoveThisKeysroke = true;
-                    //  If nothing moves, go to case 2:
-                    break;
-                case 4:
-                    if (MakeMove(KeyInProgress))
+
+            if (step == 0)
+            {
+                // Get a key input, and then start moving accordingly.
+                if (PendingKeyDowns.Count == 0) return;
+                KeyInProgress = PendingKeyDowns[0];
+                PendingKeyDowns.RemoveAt(0);
+                labelStatus.Text = "";
+                didIMakeAMoveThisKeysroke = false;
+                if (MoveMode == MoveModes.TwoPersonWaitingForArrow)
+                    MoveMode = MoveModes.TwoPersonWaitingForMouse;
+                if (MoveMode == MoveModes.None)
+                {
+                    switch (KeyInProgress)
+                    {
+                        case Keys.D1:
+                            MoveMode = MoveModes.Normal;
+                            break;
+                        case Keys.D2:
+                            MoveMode = MoveModes.TwoPersonWaitingForMouse;
+                            break;
+                        case Keys.D3:
+                            MoveMode = MoveModes.Hard;
+                            break;
+                    }
+                }
+                else
+                    step = 1;
+            }
+            if (step == 1)
+            {
+
+
+                // Move in the desired direction.
+                if (!MoveDirection(KeyInProgress))
+                    step = 2;
+                else
+                    didIMakeAMoveThisKeysroke = true;
+                //  If nothing moves, go to case 2:
+            }
+            if (step == 2)
+            {
+
+                // Merge
+                if (MergeDirection(KeyInProgress))
+                    didIMakeAMoveThisKeysroke = true;
+                step = 3;
+            }
+            if (step == 3)
+            {
+                // Move in the desired direction.
+                if (!MoveDirection(KeyInProgress))
+                    if (didIMakeAMoveThisKeysroke)
                         step = 4;
                     else
-                        step = 0;
-                    NotRight = false;
-                    NotLeft = false;
-                    NotUp = false;
-                    NotDown = false;
-                    break;
-                case 5:
-                    StartOver();
-                    step = 0;
-                    break;
+                    {
+                        // Does not count as a move
+                        if (MoveMode == MoveModes.TwoPersonWaitingForMouse)
+                            MoveMode = MoveModes.TwoPersonWaitingForArrow;
 
+                        step = 0;
+                        if (KeyInProgress == Keys.Up) NotUp = true;
+                        if (KeyInProgress == Keys.Down) NotDown = true;
+                        if (KeyInProgress == Keys.Left) NotLeft = true;
+                        if (KeyInProgress == Keys.Right) NotRight = true;
+                        labelStatus.Text = "Nope!  "
+                            + (NotUp ? "Not Up " : "")
+                            + (NotDown ? "Not Down " : "")
+                            + (NotLeft ? "Not Left " : "")
+                            + (NotRight ? "Not Right " : "")
+                             ;
+                        if (NotUp && NotDown && NotLeft && NotRight)
+                        {
+                            // Start over
+                            step = 5;
+                        }
+                    }
+                else
+                    didIMakeAMoveThisKeysroke = true;
+                //  If nothing moves, go to case 2:
             }
+            if (step == 4)
+            {
+                if (MakeMove(KeyInProgress))
+                    step = 4;
+                else
+                    step = 0;
+                NotRight = false;
+                NotLeft = false;
+                NotUp = false;
+                NotDown = false;
+            }
+            if (step == 5)
+            {
+
+                StartOver();
+                step = 0;
+            }
+
+        
             // If we moved, we start next animation now.
             foreach (var row in squares)
                 foreach (var square in row)
