@@ -149,6 +149,7 @@ namespace _2048_WinForms
             //_label.Text = "label"+col+row;
             _label.MouseClick += new System.Windows.Forms.MouseEventHandler(Square_MouseClick);
             _label.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(Square_MouseDoubleClick);
+            _label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
 
             parent.Controls.Add(_panel);
@@ -156,6 +157,7 @@ namespace _2048_WinForms
             Value = 0;
             _row = row;
             _col = col;
+            StartingPoint = _panel.Location;
 
         }
         private void MM(int row, int col, int val)
@@ -163,6 +165,11 @@ namespace _2048_WinForms
             if (Form2048.IsWaitingForMouse)
             {
                 if (Value == 0)
+                {
+                    Value = val;
+                    Form2048.IsWaitingForArrow = true;
+                }
+                else if (val == 4 && Value == 2)
                 {
                     Value = val;
                     Form2048.IsWaitingForArrow = true;

@@ -15,12 +15,16 @@ namespace _2048_WinForms
         public Form2048()
         {
             InitializeComponent();
-            Square[] Row1 = new Square[] { new Square(panelBackground, 0, 0), new Square(panelBackground, 0, 1), new Square(panelBackground, 0, 2), new Square(panelBackground, 0, 3) };
-            Square[] Row2 = new Square[] { new Square(panelBackground, 1, 0), new Square(panelBackground, 1, 1), new Square(panelBackground, 1, 2), new Square(panelBackground, 1, 3) };
-            Square[] Row3 = new Square[] { new Square(panelBackground, 2, 0), new Square(panelBackground, 2, 1), new Square(panelBackground, 2, 2), new Square(panelBackground, 2, 3) };
-            Square[] Row4 = new Square[] { new Square(panelBackground, 3, 0), new Square(panelBackground, 3, 1), new Square(panelBackground, 3, 2), new Square(panelBackground, 3, 3) };
+            Square[] Row1 = new Square[] { new Square(panelBackground, 0, 0), new Square(panelBackground, 1, 0), new Square(panelBackground, 2, 0), new Square(panelBackground, 3, 0) };
+            Square[] Row2 = new Square[] { new Square(panelBackground, 0, 1), new Square(panelBackground, 1, 1), new Square(panelBackground, 2, 1), new Square(panelBackground, 3, 1) };
+            Square[] Row3 = new Square[] { new Square(panelBackground, 0, 2), new Square(panelBackground, 1, 2), new Square(panelBackground, 2, 2), new Square(panelBackground, 3, 2) };
+            Square[] Row4 = new Square[] { new Square(panelBackground, 0, 3), new Square(panelBackground, 1, 3), new Square(panelBackground, 2, 3), new Square(panelBackground, 3, 3) };
             squares = new Square[][] { Row1, Row2, Row3, Row4 };
             StartOver();
+            ms.SetCaller(this, MoveMode);
+            Hide();
+            ms.Show();
+
         }
 
         private Square[][] squares;
@@ -33,7 +37,7 @@ namespace _2048_WinForms
                 foreach (var square in row)
                 { square.Value = 0; }
             }
-            // squares[1][2].Value = 2;  //first move.
+            squares[1][2].Value = 2;  //first move.
             // First move is later.
             labelStatus.Text = "Press an Arrow Key to play";
         }
@@ -54,16 +58,17 @@ namespace _2048_WinForms
         public static bool IsWaitingForMouse
         {
             get { return _moveMode == MoveModes.TwoPersonWaitingForMouse; }
-            set { _moveMode = MoveModes.TwoPersonWaitingForMouse; }
+            set { _moveMode = MoveModes.TwoPersonWaitingForMouse; _moved = true; }
         }
         public static bool IsWaitingForArrow
         {
             get { return _moveMode == MoveModes.TwoPersonWaitingForArrow; }
-            set { _moveMode = MoveModes.TwoPersonWaitingForArrow; }
+            set { _moveMode = MoveModes.TwoPersonWaitingForArrow; _moved = true; }
         }
 
 
         private static MoveModes _moveMode = MoveModes.None;
+        private static bool _moved = true;
         public MoveModes MoveMode
         {
             get { return _moveMode; }
@@ -411,6 +416,11 @@ namespace _2048_WinForms
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
+            // Convert static action to object action.
+            if (_moved)
+                MoveMode = _moveMode;
+            _moved = false;
+
             bool animationInProgress = false;
             foreach (var row in squares)
             {
@@ -541,10 +551,11 @@ namespace _2048_WinForms
         {
             ms.SetCaller(this, MoveMode);
             ms.Show();
+            this.Hide();
 
         }
 
-      
+
 
         private void Form2048_MouseClick(object sender, MouseEventArgs e)
         {
@@ -552,6 +563,7 @@ namespace _2048_WinForms
             {
                 ms.SetCaller(this, MoveMode);
                 ms.Show();
+                this.Hide();
 
             }
         }

@@ -33,40 +33,46 @@ namespace _2048_WinForms
 
         private void radioButtonNormal_CheckedChanged(object sender, EventArgs e)
         {
-            if (_caller != null)
-                _caller.MoveMode = Form2048.MoveModes.Normal;
-            this.Hide();
+            if (_caller == null) return;
+
+            _caller.MoveMode = Form2048.MoveModes.Normal;
+             Hide();
+           _caller.Show();
         }
 
         private void radioButtonTwoPerson_CheckedChanged(object sender, EventArgs e)
         {
-            if (_caller != null)
-                _caller.MoveMode = Form2048.MoveModes.TwoPersonWaitingForMouse;
-            this.Hide();
+            if (_caller == null) return;
 
+            _caller.MoveMode = Form2048.MoveModes.TwoPersonWaitingForMouse;
+            this.Hide();
+            _caller.Show();
         }
 
         private void radioButtonHard_CheckedChanged(object sender, EventArgs e)
         {
-            if (_caller != null)
-                _caller.MoveMode = Form2048.MoveModes.Hard;
+            if (_caller == null) return;
+
+             _caller.MoveMode = Form2048.MoveModes.Hard;
             this.Hide();
-
-
+             _caller.Show();
         }
 
         private void radioButtonHarder_CheckedChanged(object sender, EventArgs e)
         {
-            if (_caller != null)
-                _caller.MoveMode = Form2048.MoveModes.Harder;
+            if (_caller == null) return;
+
+            _caller.MoveMode = Form2048.MoveModes.Harder;
             this.Hide();
-
-
+           _caller.Show();
+ 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             this.Hide();
+            if (_caller != null)
+                _caller.Show();
         }
     }
 }
